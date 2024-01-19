@@ -19,16 +19,13 @@ app.use(
   })
 );
 app.use(body_parser.json());
-app.use(cookie_parser);
+app.use(cookie_parser());
 app.use(requestIp.mw());
 
 const db_connect = async () => {
   try {
     if (mode === "dev") {
-      await mongoose.connect(process.env.LOCAL_DB_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
+      await mongoose.connect(process.env.LOCAL_DB_URL);
       console.log("LOcal db connected successfullys");
     } else if (mode === "pro") {
       await mongoose.connect(process.env.PRODUCTION_DB_URL, {
@@ -44,7 +41,7 @@ const db_connect = async () => {
 };
 db_connect();
 
-app.use("api/auth", authRouter);
+app.use("/api/auth", authRouter);
 
 app.get("/", (req, res) => {
   res.send("hello from simple server :)");
