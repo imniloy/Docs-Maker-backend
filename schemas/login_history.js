@@ -18,11 +18,15 @@ const login_history = new Schema(
     time: {
       type: String,
       required: true,
-      unique: true,
     },
     device_info: {
       type: Object,
       default: {},
+    },
+    token: {
+      type: String,
+      required: true,
+      unique: true,
     },
   },
   {

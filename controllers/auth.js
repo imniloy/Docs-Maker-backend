@@ -3,7 +3,6 @@ import login_history from "../schemas/login_history.js";
 import bcrypt from "bcrypt";
 import DeviceDetector from "node-device-detector";
 import jwt from "jsonwebtoken";
-async function login(req, res, next) {}
 
 const get_device_info = (user_agent) => {
   const detector = new DeviceDetector({
@@ -22,8 +21,6 @@ const get_device_info = (user_agent) => {
 };
 
 async function register(req, res, next) {
-  console.log(req.headers.user_agent);
-
   try {
     const { name, email, password } = req.body;
     let hashedPassword = await bcrypt.hash(password, 10);
@@ -35,30 +32,36 @@ async function register(req, res, next) {
         message: "user already registered",
       });
     } else {
-      const user = await users_modal.create({ email, name, hashedPassword });
-      const uniqueToken = new Date.now();
+      const user = await users_modal.create({
+        email,
+        name,
+        password: hashedPassword,
+      });
+      const uniqueToken = Date.now();
       await login_history.create({
-        user_id: user.id,
+        user_id: user._id,
         user_agent: req.headers["user-agent"],
         ip,
+        token: uniqueToken,
         time: uniqueToken,
         device_info: get_device_info(req.headers["user-agent"]),
       });
 
-      const token = await jwt.sign(
+      const token = jwt.sign(
         {
           name: user.name,
           _id: user.id,
         },
         process.env.JWT_SECRET_KEY,
         {
-          expiresIn: process.env.JWT_EXPIRY,
+          expiresIn: Date.now() + 2 * 24 * 60 * 60 * 1000,
         }
       );
 
-      res.cookie("user-token", uniqueToken, {
-        expiresIn: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+      res.cookie("userToken", uniqueToken, {
+        expires: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
       });
+
       res.status(201).json({
         token,
         message: "User Registration Success",
@@ -69,6 +72,10 @@ async function register(req, res, next) {
       message: e.message,
     });
   }
+}
+
+async function login(req, res, next) {
+  console.log("login");
 }
 
 export { login, register };

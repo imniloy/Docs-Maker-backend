@@ -2,11 +2,13 @@ import express from "express";
 const app = express();
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import helmet from "helmet";
 import cors from "cors";
 import body_parser from "body-parser";
 import cookie_parser from "cookie-parser";
 import requestIp from "request-ip";
 import authRouter from "./routes/auth.js";
+import historyRouter from "./routes/histories.js";
 const port = process.env.PORT || 5000;
 
 dotenv.config();
@@ -14,13 +16,14 @@ const mode = "dev";
 
 app.use(
   cors({
-    origin: mode === "dev" ? "*" : "http://localhost:5173",
+    origin: "http://localhost:5173",
     credentials: true,
   })
 );
 app.use(body_parser.json());
 app.use(cookie_parser());
 app.use(requestIp.mw());
+app.use(helmet());
 
 const db_connect = async () => {
   try {
@@ -42,6 +45,7 @@ const db_connect = async () => {
 db_connect();
 
 app.use("/api/auth", authRouter);
+app.use("/api/login", historyRouter);
 
 app.get("/", (req, res) => {
   res.send("hello from simple server :)");
