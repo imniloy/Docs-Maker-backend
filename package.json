@@ -3,10 +3,10 @@
   "name": "docs-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js"
+    "dev": "nodemon index.js"
   },
   "author": "Niloy Kumar Das",
   "license": "ISC",
@@ -23,6 +23,6 @@
     "node-device-detector": "^2.0.18",
     "nodemon": "^3.0.2",
     "request-ip": "^3.3.0",
-    "socket.io": "^4.7.3"
+    "socket.io": "^4.7.5"
   }
 }

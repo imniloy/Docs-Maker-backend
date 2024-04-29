@@ -12,11 +12,12 @@ import historyRouter from "./routes/histories.js";
 const port = process.env.PORT || 5000;
 
 dotenv.config();
+
 const mode = "dev";
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: mode === "dev" ? "http://localhost:5173" : "",
     credentials: true,
   })
 );
@@ -29,7 +30,7 @@ const db_connect = async () => {
   try {
     if (mode === "dev") {
       await mongoose.connect(process.env.LOCAL_DB_URL);
-      console.log("LOcal db connected successfullys");
+      console.log("Local db connected successfullys");
     } else if (mode === "pro") {
       await mongoose.connect(process.env.PRODUCTION_DB_URL, {
         useNewUrlParser: true,
@@ -51,6 +52,8 @@ app.get("/", (req, res) => {
   res.send("hello from simple server :)");
 });
 
-app.listen(port, () =>
-  console.log("Server is up and running on port : " + port)
-);
+const expressServer = app.listen(port, () => {
+  console.log("Server is up and running on port: " + port);
+});
+
+export default expressServer;

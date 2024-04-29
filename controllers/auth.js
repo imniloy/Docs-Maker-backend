@@ -50,6 +50,7 @@ async function register(req, res, next) {
       const token = jwt.sign(
         {
           name: user.name,
+          email: user.email,
           _id: user.id,
         },
         process.env.JWT_SECRET_KEY,
@@ -75,7 +76,46 @@ async function register(req, res, next) {
 }
 
 async function login(req, res, next) {
-  console.log("login");
+  try {
+    const { email, password } = req.body;
+    const user =await  users_modal.findOne({ email });
+    // console.log(user);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({
+        message: "Invalid password",
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        name: user.name,
+        email: user.email,
+        _id: user.id,
+      },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: "2d", // Token expires in 2 days
+      }
+    );
+
+    res.status(200).json({
+      token,
+      message: "Login successful",
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      message: e.message,
+    });
+  }
 }
 
 export { login, register };
