@@ -10,6 +10,7 @@ io.on("connection", (socket) => {
   console.log("connection Established" + socket.id);
   socket.on("joinRoom", (docId) => {
     socket.join(docId);
+    console.log(docId);
 
     socket.on("send-changes", (data) => {
       socket.broadcast.to(data.docId).emit("receive-changes", data);

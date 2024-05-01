@@ -9,6 +9,7 @@ import cookie_parser from "cookie-parser";
 import requestIp from "request-ip";
 import authRouter from "./routes/auth.js";
 import historyRouter from "./routes/histories.js";
+import docsRouter from "./routes/docs.js";
 const port = process.env.PORT || 5000;
 
 dotenv.config();
@@ -47,6 +48,7 @@ db_connect();
 
 app.use("/api/auth", authRouter);
 app.use("/api/login", historyRouter);
+app.use("/api/docs", docsRouter);
 
 app.get("/", (req, res) => {
   res.send("hello from simple server :)");
