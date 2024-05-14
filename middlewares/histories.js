@@ -5,6 +5,7 @@ import users_modal from "../schemas/usersModal.js";
 
 const auth_check = async (req, res, next) => {
   const { cookie_token } = req;
+
   const { authorization } = req.headers;
   if (authorization) {
     const token = authorization.split("Bearer ")[1];
@@ -33,13 +34,13 @@ const auth_check = async (req, res, next) => {
               },
             ],
           });
+
           if (device) {
             req.userInfo = {
               _id: getUser._id,
               name: getUser.name,
               email: getUser.email,
             };
-
             next();
           } else {
             return res.status(401).json({
@@ -51,7 +52,6 @@ const auth_check = async (req, res, next) => {
             message: "Unauthorized",
           });
         }
-        // console.log(getUser);
       } catch (e) {
         return res.status(401).json({
           message: "Unauthorized",
@@ -62,17 +62,17 @@ const auth_check = async (req, res, next) => {
         message: "Unauthorized",
       });
     }
-    // console.log(token);
   } else {
+    console.log("authorization");
     return res.status(401).json({
       message: "Unauthorized",
     });
   }
-  //   console.log(authorization);
 };
 
 const cookie_check = async (req, res, next) => {
   const { userToken } = req.cookies;
+
   if (userToken) {
     req.cookie_token = userToken;
     next();

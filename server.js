@@ -22,7 +22,12 @@ app.use(
     credentials: true,
   })
 );
-app.use(body_parser.json());
+
+app.use(
+  body_parser.json({
+    limit: "500mb",
+  })
+);
 app.use(cookie_parser());
 app.use(requestIp.mw());
 app.use(helmet());

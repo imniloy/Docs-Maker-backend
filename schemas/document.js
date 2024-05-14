@@ -5,14 +5,24 @@ const docs_schema = new Schema({
     type: String,
     required: true,
   },
-  user_id: {
+  name: {
+    type: String,
+    required: true,
+  },
+  owner_id: {
     type: Schema.Types.ObjectId,
     ref: "users",
     required: true,
   },
+  joinedUsers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "users",
+    },
+  ],
   data: {
     type: String,
-    required: true,
+    // required: true,
   },
 });
 

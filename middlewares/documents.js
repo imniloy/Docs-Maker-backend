@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 import users_modal from "../schemas/usersModal.js";
 
 const docs_auth_check = async (req, res, next) => {
-  console.log("docs_auth_check");
   try {
     const authHeader = req.headers["authorization"];
     const bearerToken = authHeader && authHeader.split(" ")[1];

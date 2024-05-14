@@ -37,6 +37,7 @@ async function register(req, res, next) {
         name,
         password: hashedPassword,
       });
+
       const uniqueToken = Date.now();
       await login_history.create({
         user_id: user._id,
@@ -78,8 +79,7 @@ async function register(req, res, next) {
 async function login(req, res, next) {
   try {
     const { email, password } = req.body;
-    const user =await  users_modal.findOne({ email });
-    // console.log(user);
+    const user = await users_modal.findOne({ email });
     if (!user) {
       return res.status(404).json({
         message: "User not found",
@@ -106,12 +106,26 @@ async function login(req, res, next) {
       }
     );
 
-    res.status(200).json({
+    const ip = req.clientIp;
+    const uniqueToken = Date.now();
+    await login_history.create({
+      user_id: user._id,
+      user_agent: req.headers["user-agent"],
+      ip,
+      token: uniqueToken,
+      time: uniqueToken,
+      device_info: get_device_info(req.headers["user-agent"]),
+    });
+
+    res.cookie("userToken", uniqueToken, {
+      expires: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+    });
+
+    res.status(201).json({
       token,
       message: "Login successful",
     });
   } catch (e) {
-    console.log(e);
     res.status(500).json({
       message: e.message,
     });
